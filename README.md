@@ -16,20 +16,20 @@ The source data resides in S3 and needs to be processed in Sparkify's data wareh
 - `plugins/operators/data_quality.py` defines a module `DataQualityOperator` which checks data quality of each table.
 
 ## ETL pipeline in DAG
-![dag](/images/dag.png)
+![dag](/images/dag.PNG)
 
 ## Examples of Data in Tables
-> songplays
+> songplays  
 ![songplays](/images/songplays.PNG)
    
-> users
+> users  
 ![users](/images/users.PNG)
    
-> songs
+> songs  
 ![songs](/images/songs.PNG)
 
-> artists
+> artists  
 ![artists](/images/artists.PNG)
   
-> time
+> time  
 ![time](/images/time.PNG)
