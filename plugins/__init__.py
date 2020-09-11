@@ -15,6 +15,6 @@ class UdacityPlugin(AirflowPlugin):
         operators.DataQualityOperator
     ]
     helpers = [
-        helpers.SqlQueries,
+        helpers.InsertTable,
         helpers.CreateTable
     ]

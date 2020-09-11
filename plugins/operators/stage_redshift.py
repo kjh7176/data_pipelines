@@ -7,12 +7,6 @@ from helpers import CreateTable
 
 class StageToRedshiftOperator(BaseOperator):
     ui_color = '#358140'
-    copy_sql = """
-        COPY {}
-        FROM '{}'
-        ACCESS_KEY_ID '{}'
-        SECRET_ACCESS_KEY '{}'
-    """
     
     @apply_defaults
     def __init__(self,
@@ -20,6 +14,7 @@ class StageToRedshiftOperator(BaseOperator):
                  aws_credentials="",
                  s3_buckt="",
                  s3_key="",
+                 json_path="auto",
                  table="",
                  *args, **kwargs):
 
@@ -28,6 +23,7 @@ class StageToRedshiftOperator(BaseOperator):
         self.aws_credentials = aws_credentials
         self.s3_bucket = s3_buckt
         self.s3_key = s3_key
+        self.json_path = json_path
         self.table = table
 
     def execute(self, context):
@@ -40,8 +36,15 @@ class StageToRedshiftOperator(BaseOperator):
         self.log.info(f'Created {self.table} table')
         
         # copy from S3 to Redshift
+        copy_sql = """
+            COPY {}
+            FROM '{}'
+            JSON '{}'
+            ACCESS_KEY_ID '{}'
+            SECRET_ACCESS_KEY '{}'
+        """
         s3_path = "s3://{}/{}".format(self.s3_bucket, self.s3_key)
-        redshift.run(self.copy_sql.format(self.table, s3_path, credentials.access_key, credentials.secret_key))
+        redshift.run(copy_sql.format(self.table, s3_path, self.json_path, credentials.access_key, credentials.secret_key))
         self.log.info(f"Copied data from {s3_path} to {self.table}")
 
 

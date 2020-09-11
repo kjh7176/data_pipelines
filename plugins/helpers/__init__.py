@@ -1,7 +1,7 @@
-from helpers.sql_queries import SqlQueries
+from helpers.sql_queries import InsertTable
 from helpers.create_tables import CreateTable
 
 __all__ = [
-    'SqlQueries',
+    'InsertTable',
     'CreateTable'
 ]
