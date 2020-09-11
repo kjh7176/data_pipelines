@@ -27,15 +27,18 @@ class StageToRedshiftOperator(BaseOperator):
         self.table = table
 
     def execute(self, context):
+        # connect to redshift
         redshift = PostgresHook(self.conn_id)
+        # get credentials to access S3
         aws = AwsHook(self.aws_credentials)
         credentials = aws.get_credentials()
         
         # create table
         redshift.run(CreateTable.queries[self.table])
+        # log the result
         self.log.info(f'Created {self.table} table')
         
-        # copy from S3 to Redshift
+        # query string for copy data from S3 to a table in the redshift
         copy_sql = """
             COPY {}
             FROM '{}'
@@ -43,8 +46,12 @@ class StageToRedshiftOperator(BaseOperator):
             ACCESS_KEY_ID '{}'
             SECRET_ACCESS_KEY '{}'
         """
+        # path to json file in S3
         s3_path = "s3://{}/{}".format(self.s3_bucket, self.s3_key)
+        
+        # copy from S3 to Redshift
         redshift.run(copy_sql.format(self.table, s3_path, self.json_path, credentials.access_key, credentials.secret_key))
+        # log the result
         self.log.info(f"Copied data from {s3_path} to {self.table}")
 
 

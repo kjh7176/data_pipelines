@@ -18,14 +18,17 @@ class LoadFactOperator(BaseOperator):
         self.table = table
 
     def execute(self, context):
+        # connect to redshift
         redshift = PostgresHook(self.redshift_conn_id)
         
         # create table
         redshift.run(CreateTable.queries[self.table])
         self.log.info(f'Created {self.table} table')
         
-        # insert data into table
+        # query string to insert data into table
         insert_sql = "INSERT INTO {table} {select_query};"
         insert_sql = insert_sql.format(table=self.table, select_query=InsertTable.queries[self.table])
+        # insert data into table
         redshift.run(insert_sql)
+        # log the result
         self.log.info('Inserted data into table')
